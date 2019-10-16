@@ -1,0 +1,41 @@
+Raw Input:
+
+5 Players:
+playerName
+teammate1
+teammate2
+teammate3
+teammate4
+
+5 champions:
+champion1
+champion2
+champion3
+champion4
+champion5
+----later-----
+opponent1
+opponent2
+opponent3
+opponent4
+opponent5
+
+Derived Inputs:
+
+champion:
+champion points - done
+champion last X game win rate
+champion time since last played (days) - done
+
+player:
+last X game win rate
+last X game max lose streak
+
+team comp (later):
+win rate for this specific match up and ranked tier, based on general stats
+
+time when game started (later):
+maybe win rate is influenced by player sleep schedule
+
+outputs:
+Win = 1, Lose = 0
