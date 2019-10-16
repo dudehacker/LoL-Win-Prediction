@@ -78,7 +78,7 @@ def parseMatch(filename):
     output = {}
     output['gameId'] = data['gameId']
     # check if already parsed
-    outputFile = f"data_{data['gameId']}.json"
+    outputFile = f"data\\{config.playerName}\\data_{data['gameId']}.json"
     if os.path.exists(outputFile): 
         return util.readJSON(outputFile)
     
