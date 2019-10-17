@@ -6,11 +6,11 @@ from sklearn.preprocessing import MinMaxScaler
 def clean(data):
     data = data.drop('gameId',axis=1)
     # Convert champion name into champion ID
-    for col in data.columns:
-        if col.endswith("_champion"):
-            champIds = [ddragon.getChampionId(x) for x in data[col]]
-            # print(champIds)
-            data[col] = champIds
+    # for col in data.columns:
+    #     if col.endswith("_champion"):
+    #         champIds = [ddragon.getChampionId(x) for x in data[col]]
+    #         # print(champIds)
+    #         data[col] = champIds
 
     # Convert win from bool to int
     data['win'] = [1 if x else 0 for x in data['win']]

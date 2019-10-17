@@ -50,5 +50,5 @@ model.fit(
 model.save(RUN_NAME+".h5")
 
 test_error_rate = model.evaluate(X_test, Y_test, verbose=0)
-print("The mean squared error (MSE) for the test data set is: {}".format(test_error_rate))
+print("accuracy is: {}".format(test_error_rate[1]))
 
