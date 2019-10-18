@@ -28,7 +28,8 @@ def parsePreviousGames(encryptedAccount,gameCreationTime):
     wins = 0
     maxLoseStreak = 0
     loseStreak = 0
-    for game in pastGames['matches']:
+    print(f"{len(pastGames['matches'])} matches played in past week")
+    for game in pastGames['matches'][0:config.lastX]:
         try: 
             gameDetails = watcher.match.by_id(config.my_region,game['gameId'])
             for i in range(0, 10):
@@ -124,6 +125,10 @@ def parseMatch(filename):
         # championName = ddragon.getChampionName(championId)
         output[prefix+"champion"] = championId
     print(f"Win: {output['win']}")
+    end = datetime.now()
+    runTime = datetime.timestamp(end) - datetime.timestamp(now)
+    td = timedelta(seconds=int(runTime))
+    print(f"processing time: {td}")
     util.saveJSON(outputFile,output,config.playerName)
     return output
 
@@ -140,7 +145,7 @@ def createDerivedInputCsv():
                 row = parseMatch(folder+"\\"+f)
                 matchList.append(row)
 
-        util.listToCsv("data.csv", matchList)
+        util.listToCsv(f"analysis\\{config.playerName}\\data.csv", matchList)
 
     else:
         print(f"{folder} does not exist")

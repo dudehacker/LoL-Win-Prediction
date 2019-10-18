@@ -1,54 +1,62 @@
 import pandas as pd
 import keras
+import config
+import os
 from keras.models import Sequential
-from keras.layers import *
+from keras.layers import Dense
 
-RUN_NAME = "run 8 layers"
+class Analysis():
+    RUN_NAME = "run 8 layers"
 
-# Trainning data
-training_data_df = pd.read_csv("train.csv")
-X = training_data_df.drop('win', axis=1).values
-Y = training_data_df[['win']].values
+    def __init__(self,folder):
+        self._folder = folder
+        # Create a TensorBoard logger
+        self._logger = keras.callbacks.TensorBoard(
+            log_dir='logs/{}'.format(self.RUN_NAME),
+            write_graph=True,
+            histogram_freq=5
+        )
 
-# Load the separate test data set
-test_data_df = pd.read_csv("test.csv")
-X_test = test_data_df.drop('win', axis=1).values
-Y_test = test_data_df[['win']].values
+    def loadData(self,filename):
+        df = pd.read_csv(os.path.join(self._folder,filename))
+        output = {}
+        X = df.drop('win', axis=1).values
+        Y = df[['win']].values
+        output['df'] = df
+        output['X'] = X
+        output['Y'] = Y
+        return output
 
-# Define the model
-model = Sequential()
-model.add(Dense(50, input_dim=len(training_data_df.columns)-1, activation='relu', name='layer_1'))
-model.add(Dense(100, activation='relu', name='layer_2'))
-model.add(Dense(50, activation='relu', name='layer_3'))
-model.add(Dense(50, activation='relu', name='layer_4'))
-model.add(Dense(50, activation='relu', name='layer_5'))
-model.add(Dense(50, activation='relu', name='layer_6'))
-model.add(Dense(50, activation='relu', name='layer_7'))
-model.add(Dense(50, activation='relu', name='layer_8'))
-# model.add(Dense(50, activation='relu', name='layer_9'))
-model.add(Dense(1, activation='linear', name='output_layer'))
-model.compile(loss='mean_squared_error', optimizer='adam',metrics=['accuracy'])
+    def build(self):
+        # load data
+        train = self.loadData("train.csv")
+        test = self.loadData("test.csv")
 
-# Create a TensorBoard logger
-logger = keras.callbacks.TensorBoard(
-    log_dir='logs/{}'.format(RUN_NAME),
-    write_graph=True,
-    histogram_freq=5
-)
+        # Define the model
+        model = Sequential()
+        model.add(Dense(50, input_dim=len(train['df'].columns)-1, activation='relu', name='layer_1'))
+        model.add(Dense(100, activation='relu', name='layer_2'))
+        model.add(Dense(50, activation='relu', name='layer_3'))
+        model.add(Dense(50, activation='relu', name='layer_4'))
+        model.add(Dense(50, activation='relu', name='layer_5'))
+        model.add(Dense(50, activation='relu', name='layer_6'))
+        model.add(Dense(50, activation='relu', name='layer_7'))
+        model.add(Dense(50, activation='relu', name='layer_8'))
+        # model.add(Dense(50, activation='relu', name='layer_9'))
+        model.add(Dense(1, activation='linear', name='output_layer'))
+        model.compile(loss='mean_squared_error', optimizer='adam',metrics=['accuracy'])
 
-# Train the model
-model.fit(
-    X,
-    Y,
-    epochs=50,
-    shuffle=True,
-    verbose=2,
-    validation_data=(X_test,Y_test),
-    callbacks=[logger]
-)
+        # Train the model
+        model.fit(train['X'],train['Y'],epochs=50,shuffle=True,verbose=2,
+        validation_data=(test['X'],test['Y']),callbacks=[self._logger])
 
-model.save(RUN_NAME+".h5")
+        # save model
+        # model.save(RUN_NAME+".h5")
 
-test_error_rate = model.evaluate(X_test, Y_test, verbose=0)
-print("accuracy is: {}".format(test_error_rate[1]))
+        test_error_rate = model.evaluate(test['X'], test['Y'], verbose=0)
+        print("accuracy is: {}".format(test_error_rate[1]))
 
+if __name__ == "__main__":
+    folder = os.path.join("analysis",config.playerName)
+    a = Analysis(folder)
+    a.build()

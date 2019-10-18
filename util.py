@@ -3,6 +3,7 @@ import json
 import urllib.request
 import config
 import os
+from pathlib import Path
 from datetime import datetime
 import csv
 
@@ -11,11 +12,14 @@ aWeekInMs=1000*60*60*24*7
 def listToCsv(filename,listOfObjects):
     if listOfObjects:
         # print(listOfObjects)
+        path = Path(filename)
+        os.makedirs(path.parent,exist_ok=True)
         with open(filename,'w+',newline='') as csvFile:
             keys = listOfObjects[0].keys()
             writer = csv.DictWriter(csvFile,fieldnames=keys)
             writer.writeheader()
             writer.writerows(listOfObjects)
+        print(f"{filename} is saved")
     else:
         print("invalid list",listOfObjects)
 
