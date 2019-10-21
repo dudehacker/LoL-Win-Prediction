@@ -12,13 +12,21 @@ watcher = RiotWatcher(config.api_key)
 
 def getPreviousWeekGames(encryptedAccount, gameCreationTime):
     end = gameCreationTime
-    result = watcher.match.matchlist_by_account(
-        config.my_region,
-        encryptedAccount,
-        (420),
-        begin_time=end-util.aWeekInMs,
-        end_time=end
-    )
+    try:
+        result = watcher.match.matchlist_by_account(
+            config.my_region,
+            encryptedAccount,
+            (420),
+            begin_time=end-util.aWeekInMs,
+            end_time=end
+        )
+    except ApiError as err:
+        if err.response.status_code == 429:
+            # print('We should retry in {} seconds.'.format(err.headers['Retry-After']))
+            print('this retry-after is handled by default by the RiotWatcher library')
+            print('future requests wait until the retry-after time passes')
+        else:
+            raise    
     return result
 
 def parsePreviousGames(encryptedAccount,gameCreationTime):
